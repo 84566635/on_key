@@ -2,7 +2,7 @@
  * onKey.h
  *
  * Created: 2013/4/13 16:54:52
- *  Author: ÖÓ¿¡ºÆ
+ *  Author: é’Ÿä¿Šæµ©
  */ 
 
 
@@ -12,79 +12,27 @@
 #ifndef ONKEY_H_
 #define ONKEY_H_
 
-//¶¨Òå°´¼üÊı
+//å®šä¹‰æŒ‰é”®æ•°
 #define KEYNUM			2
-//¶¨Òå°´¼üµÄ´¥·¢Ìõ¼ş
+//å®šä¹‰æŒ‰é”®çš„è§¦å‘æ¡ä»¶
 #define GET_KEY_STATE()   ~( ((PIND&0x08)>>3) | ((PINA&0x80)>>6) )
-//Á¬»÷ÑÓÊ±
+//è¿å‡»å»¶æ—¶
 #define ON_TO_COB_DELA  50
 #define COB_DELA		5
-//°´¼ü×´Ì¬
-#define KS_NOM		    0x00  //ÆÕÍ¨
-#define KS_DELA         0x01  //ÑÓÊ±È¥¶¶
-#define KS_ONKEY	    0x02  //³õÊ¼°´ÏÂ
-#define KS_COB		    0x03  //Á¬»÷
-//°´¼ü·µ»ØÖµ
-#define KR_NOM			0     //ÆÕÍ¨(Ã»°´ÏÂ)
-#define KR_KEY_ON	    0x1   //³õÊ¼°´ÏÂ
-#define KR_KEY_COB		0x2   //Á¬»÷ 
-//Á½Î»Ò»¼ü
+//æŒ‰é”®çŠ¶æ€
+#define KS_NOM		    0x00  //æ™®é€š
+#define KS_DELA         0x01  //å»¶æ—¶å»æŠ–
+#define KS_ONKEY	    0x02  //åˆå§‹æŒ‰ä¸‹
+#define KS_COB		    0x03  //è¿å‡»
+//æŒ‰é”®è¿”å›å€¼
+#define KR_NOM			0     //æ™®é€š(æ²¡æŒ‰ä¸‹)
+#define KR_KEY_ON	    0x1   //åˆå§‹æŒ‰ä¸‹
+#define KR_KEY_COB		0x2   //è¿å‡» 
+//ä¸¤ä½ä¸€é”®
 #define KR_KEY_NOM_INDX(i)    (KR_NOM<<(i))
 #define KR_KEY_ON_INDX(i)     (KR_KEY_ON<<((i)*2))
 #define KR_KEY_COB_INDX(i)	  (KR_KEY_COB<<((i)*2))
 
-unsigned char readKey()
-{
-	//¸÷°´¼ü×´Ì¬
-	static unsigned char keyState[KEYNUM] = {0,0};
-	//¸÷°´¼üµÄ¼ÆÊıÆ÷
-	static unsigned char count[KEYNUM] = {0,0};
-		
-	unsigned char curKey = KRNOM;
-	unsigned char result = KR_NOM;
-	
-	curKey = GET_KEY_STATE();
-	
-	for (unsigned char i=0 ; i<KEYNUM ; i++)
-	{
-		if ( (curKey & (1<<i)))  //Èç¹ûµÚi¸ö°´ÏÂ½øĞĞ×´Ì¬×ªÒÆ
-		{
-			switch(keyState[i])
-			{
-				case KS_NOM:   keyState[i] = KS_DELA;  
-				break;
-				
-				case KS_DELA:  keyState[i] = KS_ONKEY;
-				result |=  KR_KEY_ON_INDX(i);
-				break;
-				
-				case KS_ONKEY: count[i] ++;
-				if ( count[i] >= ON_TO_COB_DELA )
-				{
-					count[i] = 0;
-					keyState[i] = KS_COB;
-					result |= KR_KEY_COB_INDX(i);
-				}
-				break;
-				
-				case KS_COB:  count[i] ++;
-				if ( count[i] >= COB_DELA )
-				{
-					count[i] = 0;
-					result |= KR_KEY_COB_INDX(i);
-				}
-				break;
-				
-				default: break;
-			}
-		}
-		else //Ã»°´ÏÂ×´Ì¬Çå0
-		{
-			keyState[i] = KS_NOM;
-			count[i] = 0;
-		}
-	}
-	return result;
-}
+
 
 #endif /* ONKEY_H_ */
