@@ -33,6 +33,6 @@
 #define KR_KEY_ON_INDX(i)     (KR_KEY_ON<<((i)*2))
 #define KR_KEY_COB_INDX(i)	  (KR_KEY_COB<<((i)*2))
 
-
+extern unsigned char readKey();
 
 #endif /* ONKEY_H_ */
